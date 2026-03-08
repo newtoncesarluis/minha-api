@@ -18,7 +18,7 @@ const pool = mysql.createPool({
 app.get('/api/pedidos/hoje', async (req, res) => {
   try {
     const [rows] = await pool.query(
-      "SELECT * FROM pedidos WHERE DATE(data_pedido) = CURDATE()"
+      "SELECT * FROM pedidos WHERE DATE(data_abertura) = CURDATE()"
     );
     res.json(rows);
   } catch (err) {
@@ -28,7 +28,7 @@ app.get('/api/pedidos/hoje', async (req, res) => {
 
 app.get('/api/pedidos', async (req, res) => {
   try {
-    const [rows] = await pool.query("SELECT * FROM pedidos ORDER BY data_pedido DESC LIMIT 100");
+    const [rows] = await pool.query("SELECT * FROM pedidos ORDER BY data_abertura DESC LIMIT 100");
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
