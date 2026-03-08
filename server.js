@@ -153,5 +153,23 @@ app.get('/api/pedidos', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// === TOP VENDEDORES ===
+app.get('/api/dashboard/top-vendedores', async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT nome_vendedor as nome, SUM(vlrtotalpedido) as valor, COUNT(*) as quantidade
+      FROM pedidos 
+      WHERE MONTH(data_abertura) = MONTH(CURDATE()) 
+        AND YEAR(data_abertura) = YEAR(CURDATE()) 
+        AND excluido = 'N'
+      GROUP BY nome_vendedor 
+      ORDER BY valor DESC 
+      LIMIT 10
+    `);
+    res.json(rows);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log('API rodando na porta ' + PORT));
